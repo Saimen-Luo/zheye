@@ -7,6 +7,7 @@
       @blur="validateInput"
       :value="modelValue"
       @input="updateValue"
+      v-bind="$attrs"
     />
     <span v-if="inputRef.error" class="invalid-feedback">
       {{ inputRef.message }}
@@ -27,6 +28,7 @@ export interface IRule {
 
 export default defineComponent({
   name: 'ValidateInput',
+  inheritAttrs: false,
   props: {
     rules: {
       type: Array as PropType<IRule[]>
@@ -34,6 +36,7 @@ export default defineComponent({
     modelValue: String
   },
   setup (props, contest) {
+    console.log(contest.attrs)
     const inputRef = reactive({
       val: props.modelValue || '',
       error: false,

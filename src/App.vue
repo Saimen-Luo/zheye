@@ -4,7 +4,12 @@
     <form>
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">邮箱地址</label>
-        <validate-input :rules="emailRules" v-model="emailVal" />
+        <validate-input
+          :rules="emailRules"
+          v-model="emailVal"
+          type="email"
+          placeholder="请输入邮箱"
+        />
         {{ emailVal }}
       </div>
       <div class="mb-3">
