@@ -9,6 +9,7 @@
           v-model="emailVal"
           type="email"
           placeholder="请输入邮箱"
+          ref="emailRef"
         />
         {{ emailVal }}
       </div>
@@ -62,8 +63,10 @@ export default defineComponent({
     const emailVal = ref('')
     const passwordVal = ref('')
     const onFormSubmit = (result: boolean) => {
-      console.log('onFormSubmit', result)
+      // console.log('onFormSubmit', result)
+      console.log('result', emailRef.value.validateInput())
     }
+    const emailRef = ref<any>()
     return {
       testColumns,
       currentUser,
@@ -71,7 +74,8 @@ export default defineComponent({
       emailVal,
       passwordRules,
       passwordVal,
-      onFormSubmit
+      onFormSubmit,
+      emailRef
     }
   }
 })

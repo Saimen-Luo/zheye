@@ -36,7 +36,7 @@ export default defineComponent({
     modelValue: String
   },
   setup (props, context) {
-    console.log(context.attrs)
+    // console.log(context.attrs)
     const inputRef = reactive({
       val: props.modelValue || '',
       error: false,
@@ -61,7 +61,10 @@ export default defineComponent({
           return passed
         })
         inputRef.error = !allPassed
+        return allPassed
       }
+      // 无 rules 永远返回 true
+      return true
     }
     const updateValue = (e: KeyboardEvent) => {
       const targetValue = (e.target as HTMLInputElement).value
