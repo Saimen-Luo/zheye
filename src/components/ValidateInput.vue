@@ -35,8 +35,8 @@ export default defineComponent({
     },
     modelValue: String
   },
-  setup (props, contest) {
-    console.log(contest.attrs)
+  setup (props, context) {
+    console.log(context.attrs)
     const inputRef = reactive({
       val: props.modelValue || '',
       error: false,
@@ -66,7 +66,7 @@ export default defineComponent({
     const updateValue = (e: KeyboardEvent) => {
       const targetValue = (e.target as HTMLInputElement).value
       inputRef.val = targetValue
-      contest.emit('update:modelValue', targetValue)
+      context.emit('update:modelValue', targetValue)
     }
     return {
       inputRef,
