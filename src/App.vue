@@ -14,11 +14,13 @@
       </div>
       <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label">密码</label>
-        <input
+        <validate-input
+          :rules="passwordRules"
+          v-model="passwordVal"
           type="password"
-          class="form-control"
-          id="exampleInputPassword1"
+          placeholder="请输入密码"
         />
+        {{ passwordVal }}
       </div>
     </form>
   </div>
@@ -49,12 +51,18 @@ export default defineComponent({
       { type: 'required', message: '电子邮箱地址不能为空' },
       { type: 'email', message: '请输入正确的电子邮箱格式' }
     ]
-    const emailVal = ref('test')
+    const passwordRules: IRule[] = [
+      { type: 'required', message: '密码不能为空' }
+    ]
+    const emailVal = ref('')
+    const passwordVal = ref('')
     return {
       testColumns,
       currentUser,
       emailRules,
-      emailVal
+      emailVal,
+      passwordRules,
+      passwordVal
     }
   }
 })
