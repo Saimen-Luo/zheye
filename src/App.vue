@@ -4,16 +4,7 @@
     <form>
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">邮箱地址</label>
-        <input
-          type="email"
-          class="form-control"
-          id="exampleInputEmail1"
-          v-model="emailRef.val"
-          @blur="validateEmail"
-        />
-        <div id="emailHelp" class="form-text">
-          {{ emailRef.message }}
-        </div>
+        <validate-input :rules="emailRules"></validate-input>
       </div>
       <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label">密码</label>
@@ -28,14 +19,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue'
+import { defineComponent } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import GlobalHeader, { IUser } from './components/GlobalHeader.vue'
+import ValidateInput, { IRule } from './components/ValidateInput.vue'
 import { testColumns } from './testData'
-
-// 正则 判断是否是邮箱
-const emailReg = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 
 const currentUser: IUser = {
   isLogin: true,
@@ -46,28 +35,18 @@ const currentUser: IUser = {
 export default defineComponent({
   name: 'App',
   components: {
-    GlobalHeader
+    GlobalHeader,
+    ValidateInput
   },
   setup () {
-    const emailRef = reactive({
-      val: '',
-      error: false,
-      message: ''
-    })
-    const validateEmail = () => {
-      if (emailRef.val.trim() === '') {
-        emailRef.error = true
-        emailRef.message = '邮件地址不能为空'
-      } else if (!emailReg.test(emailRef.val)) {
-        emailRef.error = true
-        emailRef.message = '邮件地址格式错误'
-      }
-    }
+    const emailRules: IRule[] = [
+      { type: 'required', message: '电子邮箱地址不能为空' },
+      { type: 'email', message: '请输入正确的电子邮箱格式' }
+    ]
     return {
       testColumns,
       currentUser,
-      emailRef,
-      validateEmail
+      emailRules
     }
   }
 })
