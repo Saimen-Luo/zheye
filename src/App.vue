@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <global-header :user="currentUser" />
-    <form>
+    <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">邮箱地址</label>
         <validate-input
@@ -22,7 +22,10 @@
         />
         {{ passwordVal }}
       </div>
-    </form>
+      <template #submit>
+        <button type="submit" class="btn btn-danger">提交</button>
+      </template>
+    </validate-form>
   </div>
 </template>
 
@@ -32,6 +35,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 import GlobalHeader, { IUser } from './components/GlobalHeader.vue'
 import ValidateInput, { IRule } from './components/ValidateInput.vue'
+import ValidateForm from './components/ValidateForm.vue'
 import { testColumns } from './testData'
 
 const currentUser: IUser = {
@@ -44,7 +48,8 @@ export default defineComponent({
   name: 'App',
   components: {
     GlobalHeader,
-    ValidateInput
+    ValidateInput,
+    ValidateForm
   },
   setup () {
     const emailRules: IRule[] = [
@@ -56,13 +61,17 @@ export default defineComponent({
     ]
     const emailVal = ref('')
     const passwordVal = ref('')
+    const onFormSubmit = (result: boolean) => {
+      console.log('onFormSubmit', result)
+    }
     return {
       testColumns,
       currentUser,
       emailRules,
       emailVal,
       passwordRules,
-      passwordVal
+      passwordVal,
+      onFormSubmit
     }
   }
 })
