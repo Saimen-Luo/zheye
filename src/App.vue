@@ -11,7 +11,6 @@
           placeholder="请输入邮箱"
           ref="emailRef"
         />
-        {{ emailVal }}
       </div>
       <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label">密码</label>
@@ -21,7 +20,6 @@
           type="password"
           placeholder="请输入密码"
         />
-        {{ passwordVal }}
       </div>
       <template #submit>
         <button type="submit" class="btn btn-danger">提交</button>
@@ -63,10 +61,8 @@ export default defineComponent({
     const emailVal = ref('')
     const passwordVal = ref('')
     const onFormSubmit = (result: boolean) => {
-      // console.log('onFormSubmit', result)
-      console.log('result', emailRef.value.validateInput())
+      console.log('onFormSubmit', result)
     }
-    const emailRef = ref<any>()
     return {
       testColumns,
       currentUser,
@@ -74,8 +70,7 @@ export default defineComponent({
       emailVal,
       passwordRules,
       passwordVal,
-      onFormSubmit,
-      emailRef
+      onFormSubmit
     }
   }
 })
