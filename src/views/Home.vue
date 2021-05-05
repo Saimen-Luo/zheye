@@ -20,18 +20,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
+import { useStore } from 'vuex'
 
 import ColumnList from '../components/ColumnList.vue'
-import { testColumns } from '../testData'
+import { IGlobalData } from '../store'
 export default defineComponent({
   name: 'Home',
   components: {
     ColumnList
   },
   setup () {
+    const store = useStore<IGlobalData>()
+    const list = computed(() => store.state.columns)
     return {
-      list: testColumns
+      list
     }
   }
 })
