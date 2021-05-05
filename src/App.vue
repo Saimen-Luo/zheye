@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <global-header :user="currentUser" />
-
+    <router-view />
     <footer class="text-center py-4 text-secondary bg-light mt-6">
       <small>
         <ul class="list-inline mb-0">
@@ -25,7 +25,7 @@ import GlobalHeader, { IUser } from './components/GlobalHeader.vue'
 import { testColumns } from './testData'
 
 const currentUser: IUser = {
-  isLogin: true,
+  isLogin: false,
   id: 1,
   name: 'Luo'
 }
