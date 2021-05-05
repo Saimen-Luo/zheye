@@ -19,6 +19,11 @@ const store = createStore<IGlobalData>({
     columns: testColumns,
     posts: testPosts,
     user: { isLogin: false }
+  },
+  mutations: {
+    login (state) {
+      state.user = { ...state.user, isLogin: true, name: 'Luo' }
+    }
   }
 })
 
