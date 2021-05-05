@@ -28,6 +28,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 import ValidateInput, { IRule } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
@@ -39,6 +40,7 @@ export default defineComponent({
     ValidateForm
   },
   setup () {
+    const router = useRouter()
     const emailRules: IRule[] = [
       { type: 'required', message: '电子邮箱地址不能为空' },
       { type: 'email', message: '请输入正确的电子邮箱格式' }
@@ -50,6 +52,9 @@ export default defineComponent({
     const passwordVal = ref('')
     const onFormSubmit = (result: boolean) => {
       console.log('onFormSubmit', result)
+      if (result) {
+        router.push({ name: 'column', params: { id: 1 } })
+      }
     }
     return {
       emailRules,
