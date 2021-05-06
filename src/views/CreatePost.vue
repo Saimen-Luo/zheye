@@ -14,7 +14,8 @@
       <div class="mb-3">
         <label class="form-label">文章详情：</label>
         <validate-input
-          type="text"
+          tag="textarea"
+          rows="10"
           placeholder="请输入文章详情"
           :rules="contentRules"
           v-model="contentVal"

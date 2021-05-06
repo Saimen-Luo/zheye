@@ -1,7 +1,17 @@
 <template>
   <div class="validate-input-container pb-3">
     <input
+      v-if="tag !== 'textarea'"
       type="text"
+      class="form-control"
+      :class="{ 'is-invalid': inputRef.error }"
+      @blur="validateInput"
+      :value="modelValue"
+      @input="updateValue"
+      v-bind="$attrs"
+    />
+    <textarea
+      v-else
       class="form-control"
       :class="{ 'is-invalid': inputRef.error }"
       @blur="validateInput"
@@ -27,6 +37,8 @@ export interface IRule {
   message: string
 }
 
+type TagType = 'input' | 'textarea'
+
 export default defineComponent({
   name: 'ValidateInput',
   inheritAttrs: false,
@@ -34,7 +46,11 @@ export default defineComponent({
     rules: {
       type: Array as PropType<IRule[]>
     },
-    modelValue: String
+    modelValue: String,
+    tag: {
+      type: String as PropType<TagType>,
+      default: 'input'
+    }
   },
   setup (props, context) {
     // console.log(context.attrs)
