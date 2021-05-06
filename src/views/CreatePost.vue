@@ -1,7 +1,7 @@
 <template>
   <div class="create-post-page">
     <h4>新建文章</h4>
-    <validate-form>
+    <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">文章标题：</label>
         <validate-input
@@ -30,8 +30,14 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+
 import ValidateInput, { IRule } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
+import { IGlobalData } from '../store'
+import { IPost } from '../testData'
+
 export default defineComponent({
   name: 'CreatePost',
   components: {
@@ -39,6 +45,8 @@ export default defineComponent({
     ValidateForm
   },
   setup () {
+    const store = useStore<IGlobalData>()
+    const router = useRouter()
     const titleVal = ref('')
     const titleRules: IRule[] = [
       { type: 'required', message: '文章标题不能为空' }
@@ -47,12 +55,31 @@ export default defineComponent({
     const contentRules: IRule[] = [
       { type: 'required', message: '文章详情不能为空' }
     ]
+    const onFormSubmit = (result: boolean) => {
+      // all rules pass
+      if (result) {
+        const { columnId } = store.state.user
+        // columnId may be undefined
+        if (columnId) {
+          const newPost: IPost = {
+            id: new Date().getTime(),
+            title: titleVal.value,
+            content: contentVal.value,
+            columnId,
+            createdAt: new Date().toLocaleString()
+          }
+          store.commit('createPost', newPost)
+          router.push({ name: 'column', params: { id: columnId } })
+        }
+      }
+    }
 
     return {
       titleRules,
       titleVal,
       contentVal,
-      contentRules
+      contentRules,
+      onFormSubmit
     }
   }
 })
