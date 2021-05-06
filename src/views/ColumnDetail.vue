@@ -37,8 +37,8 @@ export default defineComponent({
     const route = useRoute()
     const store = useStore<IGlobalData>()
     const currentId = +route.params.id
-    const column = computed(() => store.state.columns.find(c => c.id === currentId))
-    const posts = computed(() => store.state.posts.filter(p => p.columnId === currentId))
+    const column = computed(() => store.getters.getColumnById(currentId))
+    const posts = computed(() => store.getters.getPostsByCid(currentId))
     return {
       column,
       posts

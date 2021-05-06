@@ -24,6 +24,15 @@ const store = createStore<IGlobalData>({
     login (state) {
       state.user = { ...state.user, isLogin: true, name: 'Luo' }
     }
+  },
+  getters: {
+    getColumnById (state) {
+      // 返回函数
+      return (id: number) => state.columns.find(c => c.id === id)
+    },
+    getPostsByCid (state) {
+      return (cid: number) => state.posts.filter(p => p.columnId === cid)
+    }
   }
 })
 
