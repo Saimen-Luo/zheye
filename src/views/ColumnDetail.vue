@@ -21,11 +21,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 
-import { testColumns, testPosts } from '../testData'
 import PostList from '../components/PostList.vue'
+import { IGlobalData } from '../store'
 
 export default defineComponent({
   name: 'ColumnDetail',
@@ -34,9 +35,10 @@ export default defineComponent({
   },
   setup () {
     const route = useRoute()
+    const store = useStore<IGlobalData>()
     const currentId = +route.params.id
-    const column = testColumns.find(c => c.id === currentId)
-    const posts = testPosts.filter(p => p.columnId === currentId)
+    const column = computed(() => store.state.columns.find(c => c.id === currentId))
+    const posts = computed(() => store.state.posts.filter(p => p.columnId === currentId))
     return {
       column,
       posts
