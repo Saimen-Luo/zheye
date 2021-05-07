@@ -6,9 +6,6 @@ import router from './router'
 import store from './store'
 
 axios.defaults.baseURL = '/api/'
-axios.get('/columns').then((res) => {
-  console.log(res.data)
-})
 
 const app = createApp(App)
 app.use(router)

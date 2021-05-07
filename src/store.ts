@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import axios from 'axios'
 
 import { testColumns, testPosts, IColumn, IPost } from './testData'
 
@@ -27,6 +28,16 @@ const store = createStore<IGlobalData>({
     },
     createPost (state, newPost) {
       state.posts.push(newPost)
+    },
+    fetchColumns (state, rawData) {
+      state.columns = rawData.data.list
+    }
+  },
+  actions: {
+    fetchColumns (context) {
+      axios.get('/columns').then((res) => {
+        context.commit('fetchColumns', res.data)
+      })
     }
   },
   getters: {

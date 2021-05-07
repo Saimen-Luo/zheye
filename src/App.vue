@@ -17,12 +17,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import GlobalHeader from './components/GlobalHeader.vue'
 import { testColumns } from './testData'
+import { IGlobalData } from './store'
 
 export default defineComponent({
   name: 'App',
@@ -30,8 +31,11 @@ export default defineComponent({
     GlobalHeader
   },
   setup () {
-    const store = useStore()
+    const store = useStore<IGlobalData>()
     const currentUser = computed(() => store.state.user)
+    onMounted(() => {
+      store.dispatch('fetchColumns')
+    })
     return {
       testColumns,
       currentUser
