@@ -19,6 +19,7 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
 import { useStore } from 'vuex'
+import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import GlobalHeader from './components/GlobalHeader.vue'
@@ -30,6 +31,9 @@ export default defineComponent({
     GlobalHeader
   },
   setup () {
+    axios.get('/api/columns').then((res) => {
+      console.log(res.data)
+    })
     const store = useStore()
     const currentUser = computed(() => store.state.user)
     return {
