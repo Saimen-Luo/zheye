@@ -37,12 +37,8 @@
 import { defineComponent, PropType } from 'vue'
 import DropDown from './DropDown.vue'
 import DropDownItem from './DropDownItem.vue'
+import { IUser } from '../store'
 
-export interface IUser {
-  isLogin: boolean,
-  id?: number,
-  name?: string
-}
 export default defineComponent({
   name: 'GlobalHeader',
   components: {
