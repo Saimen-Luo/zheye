@@ -1,4 +1,4 @@
-import { createStore } from 'vuex'
+import { createStore, Commit } from 'vuex'
 import axios from 'axios'
 export interface IUser {
   isLogin: boolean,
@@ -34,6 +34,11 @@ export interface IGlobalData {
   user: IUser
 }
 
+const getAndCommit = async (url: string, mutationName: string, commit: Commit) => {
+  const { data } = await axios.get(url)
+  commit(mutationName, data)
+}
+
 const store = createStore<IGlobalData>({
   state: {
     columns: [],
@@ -58,17 +63,14 @@ const store = createStore<IGlobalData>({
     }
   },
   actions: {
-    async fetchColumns ({ commit }) {
-      const { data } = await axios.get('/columns')
-      commit('fetchColumns', data)
+    fetchColumns ({ commit }) {
+      getAndCommit('/columns', 'fetchColumns', commit)
     },
-    async fetchColumn ({ commit }, cid) {
-      const { data } = await axios.get(`/columns/${cid}`)
-      commit('fetchColumn', data)
+    fetchColumn ({ commit }, cid) {
+      getAndCommit(`/columns/${cid}`, 'fetchColumn', commit)
     },
-    async fetchPosts ({ commit }, cid) {
-      const { data } = await axios.get(`/columns/${cid}/posts`)
-      commit('fetchPosts', data)
+    fetchPosts ({ commit }, cid) {
+      getAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit)
     }
   },
   getters: {
