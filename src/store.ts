@@ -29,18 +29,22 @@ export interface IPost {
   column: string;
 }
 export interface IGlobalData {
+  loading: boolean,
   columns: IColumn[],
   posts: IPost[],
   user: IUser
 }
 
 const getAndCommit = async (url: string, mutationName: string, commit: Commit) => {
+  commit('setLoading', true)
   const { data } = await axios.get(url)
   commit(mutationName, data)
+  commit('setLoading', false)
 }
 
 const store = createStore<IGlobalData>({
   state: {
+    loading: false,
     columns: [],
     posts: [],
     user: { isLogin: true, name: 'Luo', id: 1, columnId: 1 }
@@ -60,6 +64,9 @@ const store = createStore<IGlobalData>({
     },
     fetchPosts (state, rawData) {
       state.posts = rawData.data.list
+    },
+    setLoading (state, status) {
+      state.loading = status
     }
   },
   actions: {
