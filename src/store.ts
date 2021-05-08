@@ -20,12 +20,13 @@ export interface IColumn {
   description: string;
 }
 export interface IPost {
-  id: number;
+  _id: number;
   title: string;
-  content: string;
-  image?: string;
+  excerpt?: string,
+  content?: string;
+  image?: IImage;
   createdAt: string;
-  columnId: number;
+  column: string;
 }
 export interface IGlobalData {
   columns: IColumn[],
@@ -48,12 +49,28 @@ const store = createStore<IGlobalData>({
     },
     fetchColumns (state, rawData) {
       state.columns = rawData.data.list
+    },
+    fetchColumn (state, rawData) {
+      state.columns = [rawData.data]
+    },
+    fetchPosts (state, rawData) {
+      state.posts = rawData.data.list
     }
   },
   actions: {
     fetchColumns (context) {
       axios.get('/columns').then((res) => {
         context.commit('fetchColumns', res.data)
+      })
+    },
+    fetchColumn ({ commit }, cid) {
+      axios.get(`/columns/${cid}`).then((res) => {
+        commit('fetchColumn', res.data)
+      })
+    },
+    fetchPosts ({ commit }, cid) {
+      axios.get(`/columns/${cid}/posts`).then((res) => {
+        commit('fetchPosts', res.data)
       })
     }
   },
@@ -63,7 +80,7 @@ const store = createStore<IGlobalData>({
       return (id: string) => state.columns.find(c => c._id === id)
     },
     getPostsByCid (state) {
-      return (cid: number) => state.posts.filter(p => p.columnId === cid)
+      return (cid: string) => state.posts.filter(p => p.column === cid)
     }
   }
 })
