@@ -58,20 +58,17 @@ const store = createStore<IGlobalData>({
     }
   },
   actions: {
-    fetchColumns (context) {
-      axios.get('/columns').then((res) => {
-        context.commit('fetchColumns', res.data)
-      })
+    async fetchColumns ({ commit }) {
+      const { data } = await axios.get('/columns')
+      commit('fetchColumns', data)
     },
-    fetchColumn ({ commit }, cid) {
-      axios.get(`/columns/${cid}`).then((res) => {
-        commit('fetchColumn', res.data)
-      })
+    async fetchColumn ({ commit }, cid) {
+      const { data } = await axios.get(`/columns/${cid}`)
+      commit('fetchColumn', data)
     },
-    fetchPosts ({ commit }, cid) {
-      axios.get(`/columns/${cid}/posts`).then((res) => {
-        commit('fetchPosts', res.data)
-      })
+    async fetchPosts ({ commit }, cid) {
+      const { data } = await axios.get(`/columns/${cid}/posts`)
+      commit('fetchPosts', data)
     }
   },
   getters: {
