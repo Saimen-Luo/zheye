@@ -36,10 +36,8 @@ export interface IGlobalData {
 }
 
 const getAndCommit = async (url: string, mutationName: string, commit: Commit) => {
-  commit('setLoading', true)
   const { data } = await axios.get(url)
   commit(mutationName, data)
-  commit('setLoading', false)
 }
 
 const store = createStore<IGlobalData>({
