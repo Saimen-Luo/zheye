@@ -2,9 +2,10 @@ import { createStore, Commit } from 'vuex'
 import axios from 'axios'
 export interface IUser {
   isLogin: boolean,
-  id?: number,
-  name?: string,
-  columnId?: number
+  _id?: string,
+  nickName?: string,
+  column?: string,
+  email?: string
 }
 
 interface IImage {
@@ -53,7 +54,7 @@ const store = createStore<IGlobalData>({
     loading: false,
     columns: [],
     posts: [],
-    user: { isLogin: false, name: 'Luo', id: 1, columnId: 1 }
+    user: { isLogin: false }
   },
   mutations: {
     // login (state) {
@@ -75,7 +76,12 @@ const store = createStore<IGlobalData>({
       state.loading = status
     },
     login (state, rawData) {
-      state.token = rawData.data.token
+      const { token } = rawData.data
+      state.token = token
+      axios.defaults.headers.common.Authorization = `Bearer ${token}`
+    },
+    fetchCurrentUser (state, rawData) {
+      state.user = { isLogin: true, ...rawData.data }
     }
   },
   actions: {
@@ -90,6 +96,14 @@ const store = createStore<IGlobalData>({
     },
     login ({ commit }, payload) {
       return postAndCommit('/user/login', 'login', commit, payload)
+    },
+    fetchCurrentUser ({ commit }) {
+      getAndCommit('/user/current', 'fetchCurrentUser', commit)
+    },
+    loginAndFetchUser ({ dispatch }, payload) {
+      dispatch('login', payload).then(() => {
+        dispatch('fetchCurrentUser')
+      })
     }
   },
   getters: {

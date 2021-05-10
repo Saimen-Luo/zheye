@@ -35,8 +35,7 @@ import { useRouter } from 'vue-router'
 
 import ValidateInput, { IRule } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
-import { IGlobalData } from '../store'
-import { IPost } from '../testData'
+import { IGlobalData, IPost } from '../store'
 
 export default defineComponent({
   name: 'CreatePost',
@@ -58,18 +57,18 @@ export default defineComponent({
     const onFormSubmit = (result: boolean) => {
       // all rules pass
       if (result) {
-        const { columnId } = store.state.user
-        // columnId may be undefined
-        if (columnId) {
+        const { column } = store.state.user
+        // column may be undefined
+        if (column) {
           const newPost: IPost = {
-            id: new Date().getTime(),
+            _id: new Date().getTime(),
             title: titleVal.value,
             content: contentVal.value,
-            columnId,
+            column,
             createdAt: new Date().toLocaleString()
           }
           store.commit('createPost', newPost)
-          router.push({ name: 'column', params: { id: columnId } })
+          router.push({ name: 'column', params: { id: column } })
         }
       }
     }
