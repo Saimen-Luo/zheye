@@ -1,6 +1,7 @@
 <template>
   <div class="create-post-page">
     <h4>新建文章</h4>
+    <Uploader action="/upload" />
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">文章标题：</label>
@@ -35,13 +36,15 @@ import { useRouter } from 'vue-router'
 
 import ValidateInput, { IRule } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
+import Uploader from '../components/Uploader.vue'
 import { IGlobalData, IPost } from '../store'
 
 export default defineComponent({
   name: 'CreatePost',
   components: {
     ValidateInput,
-    ValidateForm
+    ValidateForm,
+    Uploader
   },
   setup () {
     const store = useStore<IGlobalData>()
