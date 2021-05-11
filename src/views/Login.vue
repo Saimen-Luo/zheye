@@ -33,6 +33,7 @@ import { useStore } from 'vuex'
 
 import ValidateInput, { IRule } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
+import createMessage from '../components/createMessage'
 
 export default defineComponent({
   name: 'Login',
@@ -60,7 +61,12 @@ export default defineComponent({
           password: passwordVal.value
         }
         store.dispatch('loginAndFetchUser', payload).then(() => {
-          router.push('/')
+          const timeout = 1000
+          // 登陆成功1秒后跳转首页
+          createMessage('success', '登陆成功，跳转首页...', timeout)
+          setTimeout(() => {
+            router.push('/')
+          }, timeout)
         }).catch(e => {
           console.log(e)
         })
