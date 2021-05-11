@@ -29,7 +29,14 @@ export interface IPost {
   createdAt: string;
   column: string;
 }
+
+export interface IGlobalError {
+  status: boolean
+  message?: string
+}
+
 export interface IGlobalData {
+  error: IGlobalError,
   token: string,
   loading: boolean,
   columns: IColumn[],
@@ -50,6 +57,7 @@ const postAndCommit = async (url: string, mutationName: string, commit: Commit, 
 
 const store = createStore<IGlobalData>({
   state: {
+    error: { status: false },
     token: localStorage.getItem('token') || '',
     loading: false,
     columns: [],
@@ -83,6 +91,9 @@ const store = createStore<IGlobalData>({
     },
     fetchCurrentUser (state, rawData) {
       state.user = { isLogin: true, ...rawData.data }
+    },
+    setError (state, e: IGlobalError) {
+      state.error = e
     }
   },
   actions: {
@@ -102,8 +113,8 @@ const store = createStore<IGlobalData>({
       getAndCommit('/user/current', 'fetchCurrentUser', commit)
     },
     loginAndFetchUser ({ dispatch }, payload) {
-      dispatch('login', payload).then(() => {
-        dispatch('fetchCurrentUser')
+      return dispatch('login', payload).then(() => {
+        return dispatch('fetchCurrentUser')
       })
     }
   },
