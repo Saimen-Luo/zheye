@@ -19,7 +19,7 @@
 <script lang="ts">
 import { defineComponent, PropType, ref } from 'vue'
 
-export type MessageType = 'success' | 'error' | 'default'
+type MessageType = 'success' | 'error' | 'default'
 
 export default defineComponent({
   name: 'Message',
