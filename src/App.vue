@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <global-header :user="currentUser" />
-    <h1>{{ error.message }}</h1>
+    <Message type="error" :message="error.message" v-if="error.status" />
     <loading text="加载中..." background="rgba(0,0,0,.8)" v-if="isLoading" />
     <router-view />
     <footer class="text-center py-4 text-secondary bg-light mt-6">
@@ -26,13 +26,15 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 import GlobalHeader from './components/GlobalHeader.vue'
 import Loading from './components/Loading.vue'
+import Message from './components/Message.vue'
 import { IGlobalData } from './store'
 
 export default defineComponent({
   name: 'App',
   components: {
     GlobalHeader,
-    Loading
+    Loading,
+    Message
   },
   setup () {
     const store = useStore<IGlobalData>()
