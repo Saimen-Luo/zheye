@@ -5,7 +5,16 @@
       action="/upload"
       :beforeUpload="beforeUpload"
       @file-uploaded="onFileUploaded"
-    />
+    >
+      <template #uploaded="slotProps">
+        <!-- 上传成功展示图片 -->
+        <img
+          :src="slotProps.uploadData.data.url"
+          alt="upload-image"
+          width="500"
+        />
+      </template>
+    </Uploader>
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">文章标题：</label>
