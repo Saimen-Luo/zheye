@@ -1,7 +1,7 @@
 <template>
   <div class="create-post-page">
     <h4>新建文章</h4>
-    <Uploader action="/upload" />
+    <Uploader action="/upload" :beforeUpload="beforeUpload" />
     <validate-form @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">文章标题：</label>
@@ -38,6 +38,7 @@ import ValidateInput, { IRule } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
 import Uploader from '../components/Uploader.vue'
 import { IGlobalData, IPost } from '../store'
+import createMessage from '../components/createMessage'
 
 export default defineComponent({
   name: 'CreatePost',
@@ -75,13 +76,21 @@ export default defineComponent({
         }
       }
     }
+    const beforeUpload = (file: File) => {
+      const isJPG = file.type === 'image/jpeg'
+      if (!isJPG) {
+        createMessage('error', '只能上传 JGP 格式图片')
+      }
+      return isJPG
+    }
 
     return {
       titleRules,
       titleVal,
       contentVal,
       contentRules,
-      onFormSubmit
+      onFormSubmit,
+      beforeUpload
     }
   }
 })
