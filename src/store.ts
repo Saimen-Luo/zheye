@@ -1,5 +1,11 @@
 import { createStore, Commit } from 'vuex'
 import axios from 'axios'
+
+export interface IResponse<P> {
+  code: number,
+  msg: string,
+  data: P
+}
 export interface IUser {
   isLogin: boolean,
   _id?: string,
@@ -8,7 +14,7 @@ export interface IUser {
   email?: string
 }
 
-interface IImage {
+export interface IImage {
   _id?: string,
   url?: string,
   createdAt?: string

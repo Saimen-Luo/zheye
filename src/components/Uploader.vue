@@ -32,7 +32,8 @@ export default defineComponent({
       type: Function as PropType<CheckFunctioin>
     }
   },
-  setup (props) {
+  emits: ['file-uploaded', 'file-uploaded-error'],
+  setup (props, { emit }) {
     const fileInput = ref<null | HTMLInputElement>(null)
     const fileStatus = ref<UploadStatus>('ready')
     const trigerUpload = () => {
@@ -60,8 +61,10 @@ export default defineComponent({
         }).then((res) => {
           console.log(res.data)
           fileStatus.value = 'success'
-        }).catch(() => {
+          emit('file-uploaded', res.data)
+        }).catch((err) => {
           fileStatus.value = 'error'
+          emit('file-uploaded-error', { err })
         }).finally(() => {
           if (fileInput.value) {
             // 清空 input 的值
