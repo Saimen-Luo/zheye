@@ -70,6 +70,7 @@ export default defineComponent({
     const store = useStore<IGlobalData>()
     const router = useRouter()
     const titleVal = ref('')
+    let imageId = ''
     const titleRules: IRule[] = [
       { type: 'required', message: '文章标题不能为空' }
     ]
@@ -80,18 +81,25 @@ export default defineComponent({
     const onFormSubmit = (result: boolean) => {
       // all rules pass
       if (result) {
-        const { column } = store.state.user
+        const { column, _id } = store.state.user
         // column may be undefined
         if (column) {
           const newPost: IPost = {
-            _id: new Date().getTime(),
             title: titleVal.value,
             content: contentVal.value,
             column,
-            createdAt: new Date().toLocaleString()
+            author: _id
           }
-          store.commit('createPost', newPost)
-          router.push({ name: 'column', params: { id: column } })
+          if (imageId) {
+            newPost.image = imageId
+          }
+          store.dispatch('createPost', newPost).then(() => {
+            const timeout = 1000
+            createMessage('success', '发表成功，跳转到专栏...', timeout)
+            setTimeout(() => {
+              router.push({ name: 'column', params: { id: column } })
+            }, timeout)
+          })
         }
       }
     }
@@ -108,7 +116,10 @@ export default defineComponent({
     }
 
     const onFileUploaded = (rawData: IResponse<IImage>) => {
-      createMessage('success', `上传图片ID ${rawData.data._id}`)
+      // createMessage('success', `上传图片ID ${rawData.data._id}`)
+      if (rawData.data._id) {
+        imageId = rawData.data._id
+      }
     }
 
     return {

@@ -27,13 +27,14 @@ export interface IColumn {
   description: string;
 }
 export interface IPost {
-  _id: number;
+  _id?: string;
   title: string;
   excerpt?: string,
   content?: string;
-  image?: IImage;
-  createdAt: string;
+  image?: IImage | string;
+  createdAt?: string;
   column: string;
+  author?: string;
 }
 
 export interface IGlobalError {
@@ -120,6 +121,9 @@ const store = createStore<IGlobalData>({
     },
     login ({ commit }, payload) {
       return postAndCommit('/user/login', 'login', commit, payload)
+    },
+    createPost ({ commit }, payload) {
+      return postAndCommit('/posts', 'createPost', commit, payload)
     },
     fetchCurrentUser ({ commit }) {
       return getAndCommit('/user/current', 'fetchCurrentUser', commit)
