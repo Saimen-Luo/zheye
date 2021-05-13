@@ -57,6 +57,7 @@ import ValidateForm from '../components/ValidateForm.vue'
 import Uploader from '../components/Uploader.vue'
 import { IGlobalData, IPost, IResponse, IImage } from '../store'
 import createMessage from '../components/createMessage'
+import { beforeUploadCheck } from '../Helper'
 
 export default defineComponent({
   name: 'CreatePost',
@@ -95,12 +96,17 @@ export default defineComponent({
       }
     }
     const beforeUpload = (file: File) => {
-      const isJPG = file.type === 'image/jpeg'
-      if (!isJPG) {
-        createMessage('error', '只能上传 JGP 格式图片')
+      const result = beforeUploadCheck(file, { format: ['image/jpeg', 'image/png'], size: 1 })
+      const { passed, error } = result
+      if (error === 'format') {
+        createMessage('error', '上传图片只能是 JPG/PNG 格式!')
       }
-      return isJPG
+      if (error === 'size') {
+        createMessage('error', '上传图片大小不能超过 1Mb')
+      }
+      return passed
     }
+
     const onFileUploaded = (rawData: IResponse<IImage>) => {
       createMessage('success', `上传图片ID ${rawData.data._id}`)
     }
