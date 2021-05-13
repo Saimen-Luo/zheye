@@ -5,14 +5,19 @@
       action="/upload"
       :beforeUpload="beforeUpload"
       @file-uploaded="onFileUploaded"
+      class="d-flex align-items-center justify-content-center bg-light text-secondary w-100 my-4"
     >
+      <h2>点击上传头图</h2>
+      <!-- <template #loading>
+        <div class="d-flex">
+          <div class="spinner-border text-secondary" role="status">
+            <span class="visually-hidden">Loading</span>
+          </div>
+        </div>
+      </template> -->
       <template #uploaded="slotProps">
         <!-- 上传成功展示图片 -->
-        <img
-          :src="slotProps.uploadData.data.url"
-          alt="upload-image"
-          width="500"
-        />
+        <img :src="slotProps.uploadData.data.url" alt="upload-image" />
       </template>
     </Uploader>
     <validate-form @form-submit="onFormSubmit">
