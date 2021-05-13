@@ -6,7 +6,7 @@
     >
       <div class="col-3 text-center">
         <img
-          :src="column.avatar && column.avatar.url"
+          :src="column.avatar && column.avatar.fitUrl"
           :alt="column.title"
           class="rounded-circle border w-100"
         />
@@ -26,7 +26,8 @@ import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 
 import PostList from '../components/PostList.vue'
-import { IGlobalData } from '../store'
+import { IGlobalData, IColumn } from '../store'
+import { generateFitUrl } from '../Helper'
 
 export default defineComponent({
   name: 'ColumnDetail',
@@ -37,7 +38,13 @@ export default defineComponent({
     const route = useRoute()
     const store = useStore<IGlobalData>()
     const currentId = route.params.id
-    const column = computed(() => store.getters.getColumnById(currentId))
+    const column = computed<IColumn>(() => {
+      const selectColumn = store.getters.getColumnById(currentId)
+      if (selectColumn) {
+        generateFitUrl(selectColumn, 100, 100)
+      }
+      return selectColumn
+    })
     const posts = computed(() => store.getters.getPostsByCid(currentId))
     onMounted(() => {
       store.dispatch('fetchColumn', currentId)

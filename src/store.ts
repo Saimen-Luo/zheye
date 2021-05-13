@@ -17,7 +17,8 @@ export interface IUser {
 export interface IImage {
   _id?: string,
   url?: string,
-  createdAt?: string
+  createdAt?: string,
+  fitUrl?: string
 }
 
 export interface IColumn {
