@@ -6,13 +6,6 @@ export interface IResponse<P> {
   msg: string,
   data: P
 }
-export interface IUser {
-  isLogin: boolean,
-  _id?: string,
-  nickName?: string,
-  column?: string,
-  email?: string
-}
 
 export interface IImage {
   _id?: string,
@@ -21,6 +14,15 @@ export interface IImage {
   fitUrl?: string
 }
 
+export interface IUser {
+  avatar?: IImage;
+  description?: string,
+  isLogin: boolean,
+  _id?: string,
+  nickName?: string,
+  column?: string,
+  email?: string
+}
 export interface IColumn {
   _id: string;
   title: string;
@@ -89,6 +91,9 @@ const store = createStore<IGlobalData>({
     fetchPosts (state, rawData) {
       state.posts = rawData.data.list
     },
+    fetchPost (state, rawData) {
+      state.posts = [rawData.data]
+    },
     setLoading (state, status) {
       state.loading = status
     },
@@ -120,6 +125,9 @@ const store = createStore<IGlobalData>({
     fetchPosts ({ commit }, cid) {
       return getAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit)
     },
+    fetchPost ({ commit }, pid) {
+      return getAndCommit(`/posts/${pid}`, 'fetchPost', commit)
+    },
     login ({ commit }, payload) {
       return postAndCommit('/user/login', 'login', commit, payload)
     },
@@ -142,6 +150,9 @@ const store = createStore<IGlobalData>({
     },
     getPostsByCid (state) {
       return (cid: string) => state.posts.filter(p => p.column === cid)
+    },
+    getCurrentPost (state) {
+      return (pid: string) => state.posts.find(p => p._id === pid)
     }
   }
 })
