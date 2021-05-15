@@ -6,6 +6,7 @@
       :beforeUpload="beforeUpload"
       @file-uploaded="onFileUploaded"
       class="d-flex align-items-center justify-content-center bg-light text-secondary w-100 my-4"
+      :uploaded="uploadedData"
     >
       <h2>点击上传头图</h2>
       <!-- <template #loading>
@@ -48,9 +49,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import ValidateInput, { IRule } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
@@ -67,8 +68,12 @@ export default defineComponent({
     Uploader
   },
   setup () {
+    const uploadedData = ref()
     const store = useStore<IGlobalData>()
     const router = useRouter()
+    const route = useRoute()
+    // !! 转换为布尔值
+    const isEditMOde = !!route.query.id
     const titleVal = ref('')
     let imageId = ''
     const titleRules: IRule[] = [
@@ -78,6 +83,19 @@ export default defineComponent({
     const contentRules: IRule[] = [
       { type: 'required', message: '文章详情不能为空' }
     ]
+    onMounted(() => {
+      if (isEditMOde) {
+        store.dispatch('fetchPost', route.query.id).then((rawDate: IResponse<IPost>) => {
+          const currentPost = rawDate.data
+          if (currentPost.image) {
+            uploadedData.value = { data: currentPost.image }
+          }
+          titleVal.value = currentPost.title
+          // currentPost.content may be undefined
+          contentVal.value = currentPost.content || ''
+        })
+      }
+    })
     const onFormSubmit = (result: boolean) => {
       // all rules pass
       if (result) {
@@ -129,7 +147,8 @@ export default defineComponent({
       contentRules,
       onFormSubmit,
       beforeUpload,
-      onFileUploaded
+      onFileUploaded,
+      uploadedData
     }
   }
 })
