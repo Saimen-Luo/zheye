@@ -6,8 +6,7 @@
       class="form-control"
       :class="{ 'is-invalid': inputRef.error }"
       @blur="validateInput"
-      :value="modelValue"
-      @input="updateValue"
+      v-model="inputRef.val"
       v-bind="$attrs"
     />
     <textarea
@@ -15,8 +14,7 @@
       class="form-control"
       :class="{ 'is-invalid': inputRef.error }"
       @blur="validateInput"
-      :value="modelValue"
-      @input="updateValue"
+      v-model="inputRef.val"
       v-bind="$attrs"
     />
     <span v-if="inputRef.error" class="invalid-feedback">
@@ -26,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, reactive, onMounted } from 'vue'
+import { defineComponent, PropType, reactive, onMounted, computed } from 'vue'
 
 import { emitter } from './ValidateForm.vue'
 // 正则 判断是否是邮箱
@@ -56,7 +54,12 @@ export default defineComponent({
   setup (props, context) {
     // console.log(context.attrs)
     const inputRef = reactive({
-      val: props.modelValue || '',
+      val: computed({
+        get: () => props.modelValue || '',
+        set: val => {
+          context.emit('update:modelValue', val)
+        }
+      }),
       error: false,
       message: ''
     })
@@ -87,18 +90,12 @@ export default defineComponent({
       // 无 rules 永远返回 true
       return true
     }
-    const updateValue = (e: KeyboardEvent) => {
-      const targetValue = (e.target as HTMLInputElement).value
-      inputRef.val = targetValue
-      context.emit('update:modelValue', targetValue)
-    }
     onMounted(() => {
       emitter.emit('form-item-created', validateInput)
     })
     return {
       inputRef,
-      validateInput,
-      updateValue
+      validateInput
     }
   }
 })
