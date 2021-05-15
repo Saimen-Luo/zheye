@@ -37,7 +37,7 @@ export interface IPost {
   image?: IImage | string;
   createdAt?: string;
   column: string;
-  author?: string;
+  author?: string | IUser;
 }
 
 export interface IGlobalError {
