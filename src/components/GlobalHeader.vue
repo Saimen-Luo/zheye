@@ -21,6 +21,11 @@
               新建文章
             </router-link>
           </drop-down-item>
+          <drop-down-item>
+            <router-link :to="`/column/${user.column}`" class="dropdown-item">
+              我的专栏
+            </router-link>
+          </drop-down-item>
           <drop-down-item disabled>
             <a href="#" class="dropdown-item">编辑资料</a>
           </drop-down-item>
