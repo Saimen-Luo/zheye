@@ -108,6 +108,11 @@ const store = createStore<IGlobalData>({
         return post
       })
     },
+    deletePost (state, { data }) {
+      state.posts = state.posts.filter(post => {
+        return post._id !== data._id
+      })
+    },
     setLoading (state, status) {
       state.loading = status
     },
@@ -146,6 +151,11 @@ const store = createStore<IGlobalData>({
       return asyncAndCommit(`/posts/${id}`, 'updatePost', commit, {
         method: 'patch',
         data: payload
+      })
+    },
+    deletePost ({ commit }, id) {
+      return asyncAndCommit(`/posts/${id}`, 'deletePost', commit, {
+        method: 'delete'
       })
     },
     login ({ commit }, payload) {
