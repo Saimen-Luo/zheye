@@ -54,8 +54,8 @@ export interface IGlobalData {
   error: IGlobalError,
   token: string,
   loading: boolean,
-  columns: IArrLikeObj<IColumn>,
-  posts: IArrLikeObj<IPost>,
+  columns: { data: IArrLikeObj<IColumn>, isLoaded: boolean },
+  posts: { data: IArrLikeObj<IPost>, loadedColumns: string[] },
   user: IUser
 }
 
@@ -82,8 +82,8 @@ const store = createStore<IGlobalData>({
     error: { status: false },
     token: localStorage.getItem('token') || '',
     loading: false,
-    columns: {},
-    posts: {},
+    columns: { data: {}, isLoaded: false },
+    posts: { data: {}, loadedColumns: [] },
     user: { isLogin: false }
   },
   mutations: {
@@ -91,25 +91,25 @@ const store = createStore<IGlobalData>({
     //   state.user = { ...state.user, isLogin: true, name: 'Luo' }
     // },
     createPost (state, newPost) {
-      state.posts[newPost._id] = newPost
+      state.posts.data[newPost._id] = newPost
     },
     fetchColumns (state, rawData) {
-      state.columns = arrToObj(rawData.data.list)
+      state.columns.data = arrToObj(rawData.data.list)
     },
     fetchColumn (state, rawData) {
-      state.columns[rawData.data._id] = rawData.data
+      state.columns.data[rawData.data._id] = rawData.data
     },
     fetchPosts (state, rawData) {
-      state.posts = arrToObj(rawData.data.list)
+      state.posts.data = arrToObj(rawData.data.list)
     },
     fetchPost (state, rawData) {
-      state.posts[rawData.data._id] = rawData.data
+      state.posts.data[rawData.data._id] = rawData.data
     },
     updatePost (state, { data }) {
-      state.posts[data._id] = data
+      state.posts.data[data._id] = data
     },
     deletePost (state, { data }) {
-      delete state.posts[data._id]
+      delete state.posts.data[data._id]
     },
     setLoading (state, status) {
       state.loading = status
@@ -173,17 +173,17 @@ const store = createStore<IGlobalData>({
   },
   getters: {
     getColumns (state) {
-      return objToArr(state.columns)
+      return objToArr(state.columns.data)
     },
     getColumnById (state) {
       // 返回函数
-      return (id: string) => state.columns[id]
+      return (id: string) => state.columns.data[id]
     },
     getPostsByCid (state) {
-      return (cid: string) => objToArr(state.posts).filter(p => p.column === cid)
+      return (cid: string) => objToArr(state.posts.data).filter(p => p.column === cid)
     },
     getCurrentPost (state) {
-      return (pid: string) => state.posts[pid]
+      return (pid: string) => state.posts.data[pid]
     }
   }
 })
