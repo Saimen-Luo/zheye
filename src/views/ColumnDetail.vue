@@ -47,7 +47,6 @@ export default defineComponent({
     })
     const posts = computed(() => store.getters.getPostsByCid(currentId))
     onMounted(() => {
-      store.dispatch('fetchColumn', currentId)
       store.dispatch('fetchPosts', currentId)
     })
     return {

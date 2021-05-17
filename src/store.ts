@@ -97,9 +97,6 @@ const store = createStore<IGlobalData>({
       state.columns.data = arrToObj(rawData.data.list)
       state.columns.isLoaded = true
     },
-    fetchColumn (state, rawData) {
-      state.columns.data[rawData.data._id] = rawData.data
-    },
     fetchPosts (state, rawData) {
       state.posts.data = arrToObj(rawData.data.list)
     },
@@ -138,11 +135,6 @@ const store = createStore<IGlobalData>({
       // 只在 columns 未获取时发送请求
       if (!state.columns.isLoaded) {
         return getAndCommit('/columns', 'fetchColumns', commit)
-      }
-    },
-    fetchColumn ({ state, commit }, cid) {
-      if (!state.columns.data[cid]) {
-        return getAndCommit(`/columns/${cid}`, 'fetchColumn', commit)
       }
     },
     fetchPosts ({ commit }, cid) {
