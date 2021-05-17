@@ -32,7 +32,7 @@ export default defineComponent({
   },
   setup () {
     const store = useStore<IGlobalData>()
-    const list = computed(() => store.state.columns)
+    const list = computed(() => store.getters.getColumns)
     onMounted(() => {
       store.dispatch('fetchColumns')
     })

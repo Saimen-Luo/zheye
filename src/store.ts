@@ -1,6 +1,8 @@
 import { createStore, Commit } from 'vuex'
 import axios, { AxiosRequestConfig } from 'axios'
 
+import { arrToObj, objToArr } from './Helper'
+
 export interface IResponse<P> {
   code: number,
   msg: string,
@@ -45,12 +47,15 @@ export interface IGlobalError {
   message?: string
 }
 
+interface IArrLikeObj<T> {
+  [id: string]: T
+}
 export interface IGlobalData {
   error: IGlobalError,
   token: string,
   loading: boolean,
-  columns: IColumn[],
-  posts: IPost[],
+  columns: IArrLikeObj<IColumn>,
+  posts: IArrLikeObj<IPost>,
   user: IUser
 }
 
@@ -77,8 +82,8 @@ const store = createStore<IGlobalData>({
     error: { status: false },
     token: localStorage.getItem('token') || '',
     loading: false,
-    columns: [],
-    posts: [],
+    columns: {},
+    posts: {},
     user: { isLogin: false }
   },
   mutations: {
@@ -86,32 +91,25 @@ const store = createStore<IGlobalData>({
     //   state.user = { ...state.user, isLogin: true, name: 'Luo' }
     // },
     createPost (state, newPost) {
-      state.posts.push(newPost)
+      state.posts[newPost._id] = newPost
     },
     fetchColumns (state, rawData) {
-      state.columns = rawData.data.list
+      state.columns = arrToObj(rawData.data.list)
     },
     fetchColumn (state, rawData) {
-      state.columns = [rawData.data]
+      state.columns[rawData.data._id] = rawData.data
     },
     fetchPosts (state, rawData) {
-      state.posts = rawData.data.list
+      state.posts = arrToObj(rawData.data.list)
     },
     fetchPost (state, rawData) {
-      state.posts = [rawData.data]
+      state.posts[rawData.data._id] = rawData.data
     },
     updatePost (state, { data }) {
-      state.posts = state.posts.map(post => {
-        if (post._id === data._id) {
-          return data
-        }
-        return post
-      })
+      state.posts[data._id] = data
     },
     deletePost (state, { data }) {
-      state.posts = state.posts.filter(post => {
-        return post._id !== data._id
-      })
+      delete state.posts[data._id]
     },
     setLoading (state, status) {
       state.loading = status
@@ -174,15 +172,18 @@ const store = createStore<IGlobalData>({
     }
   },
   getters: {
+    getColumns (state) {
+      return objToArr(state.columns)
+    },
     getColumnById (state) {
       // 返回函数
-      return (id: string) => state.columns.find(c => c._id === id)
+      return (id: string) => state.columns[id]
     },
     getPostsByCid (state) {
-      return (cid: string) => state.posts.filter(p => p.column === cid)
+      return (cid: string) => objToArr(state.posts).filter(p => p.column === cid)
     },
     getCurrentPost (state) {
-      return (pid: string) => state.posts.find(p => p._id === pid)
+      return (pid: string) => state.posts[pid]
     }
   }
 })
