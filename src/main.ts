@@ -5,6 +5,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+import './Helper'
+
 axios.defaults.baseURL = '/api/'
 axios.interceptors.request.use(config => {
   store.commit('setLoading', true)
