@@ -40,10 +40,11 @@ export default defineComponent({
     const store = useStore<IGlobalData>()
     const list = computed(() => store.getters.getColumns)
     const total = computed(() => store.state.columns.total)
+    const currentPage = computed(() => store.state.columns.currentPage)
     onMounted(() => {
       store.dispatch('fetchColumns', { pageSize: 3 })
     })
-    const { loadMore, isLastPage } = useLoadMore('fetchColumns', total, { currentPage: 2, pageSize: 3 })
+    const { loadMore, isLastPage } = useLoadMore('fetchColumns', total, { currentPage: currentPage.value === 0 ? 2 : currentPage.value + 1, pageSize: 3 })
     return {
       list,
       loadMore,
