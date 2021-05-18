@@ -54,7 +54,7 @@ export interface IGlobalData {
   error: IGlobalError,
   token: string,
   loading: boolean,
-  columns: { data: IArrLikeObj<IColumn>, isLoaded: boolean },
+  columns: { data: IArrLikeObj<IColumn>, isLoaded: boolean, total: number },
   posts: { data: IArrLikeObj<IPost>, loadedColumns: string[] },
   user: IUser
 }
@@ -86,7 +86,7 @@ const store = createStore<IGlobalData>({
     error: { status: false },
     token: localStorage.getItem('token') || '',
     loading: false,
-    columns: { data: {}, isLoaded: false },
+    columns: { data: {}, isLoaded: false, total: 0 },
     posts: { data: {}, loadedColumns: [] },
     user: { isLogin: false }
   },
@@ -98,8 +98,13 @@ const store = createStore<IGlobalData>({
       state.posts.data[newPost._id] = newPost
     },
     fetchColumns (state, rawData) {
-      state.columns.data = arrToObj(rawData.data.list)
-      state.columns.isLoaded = true
+      const { data } = state.columns
+      const { list, count } = rawData.data
+      state.columns = {
+        data: { ...data, ...arrToObj(list) },
+        total: count,
+        isLoaded: true
+      }
     },
     fetchPosts (state, { data: rawData, extraData: columnId }) {
       state.posts.data = { ...state.posts.data, ...arrToObj(rawData.data.list) }
@@ -136,11 +141,13 @@ const store = createStore<IGlobalData>({
     }
   },
   actions: {
-    fetchColumns ({ state, commit }) {
+    fetchColumns ({ state, commit }, params = {}) {
+      const { currentPage = 1, pageSize = 5 } = params
       // 只在 columns 未获取时发送请求
-      if (!state.columns.isLoaded) {
-        return getAndCommit('/columns', 'fetchColumns', commit)
-      }
+      // if (!state.columns.isLoaded) {
+      //   return getAndCommit('/columns', 'fetchColumns', commit)
+      // }
+      return asyncAndCommit(`/columns?currentPage=${currentPage}&pageSize=${pageSize}`, 'fetchColumns', commit)
     },
     fetchPosts ({ state, commit }, cid) {
       if (!state.posts.loadedColumns.includes(cid)) {
