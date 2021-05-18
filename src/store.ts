@@ -71,9 +71,13 @@ const postAndCommit = async (url: string, mutationName: string, commit: Commit, 
   return data
 }
 
-const asyncAndCommit = async (url: string, mutationName: string, commit: Commit, config: AxiosRequestConfig = { method: 'get' }) => {
+const asyncAndCommit = async (url: string, mutationName: string, commit: Commit, config: AxiosRequestConfig = { method: 'get' }, extraData?: any) => {
   const { data } = await axios(url, config)
-  commit(mutationName, data)
+  if (extraData) {
+    commit(mutationName, { data, extraData })
+  } else {
+    commit(mutationName, data)
+  }
   return data
 }
 
@@ -97,8 +101,9 @@ const store = createStore<IGlobalData>({
       state.columns.data = arrToObj(rawData.data.list)
       state.columns.isLoaded = true
     },
-    fetchPosts (state, rawData) {
-      state.posts.data = arrToObj(rawData.data.list)
+    fetchPosts (state, { data: rawData, extraData: columnId }) {
+      state.posts.data = { ...state.posts.data, ...arrToObj(rawData.data.list) }
+      state.posts.loadedColumns.push(columnId)
     },
     fetchPost (state, rawData) {
       state.posts.data[rawData.data._id] = rawData.data
@@ -137,8 +142,10 @@ const store = createStore<IGlobalData>({
         return getAndCommit('/columns', 'fetchColumns', commit)
       }
     },
-    fetchPosts ({ commit }, cid) {
-      return getAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit)
+    fetchPosts ({ state, commit }, cid) {
+      if (!state.posts.loadedColumns.includes(cid)) {
+        return asyncAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit, { method: 'get' }, cid)
+      }
     },
     fetchPost ({ commit }, pid) {
       return getAndCommit(`/posts/${pid}`, 'fetchPost', commit)
