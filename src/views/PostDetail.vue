@@ -72,7 +72,9 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
     const currentId = route.params.id
-    const md = new MarkdownIt()
+    const md = new MarkdownIt({
+      html: true
+    })
     onMounted(() => {
       store.dispatch('fetchPost', currentId)
     })
