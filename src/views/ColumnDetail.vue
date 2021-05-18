@@ -53,6 +53,7 @@ export default defineComponent({
       }
       return selectColumn
     })
+    console.log(column)
     const posts = computed(() => store.getters.getPostsByCid(currentId))
     const total = computed(() => {
       const currentLoadcolumn = store.state.posts.loadedColumns[currentId]
@@ -76,6 +77,8 @@ export default defineComponent({
       currentId
     })
     onMounted(() => {
+      // needed when refresh on ColumnDetail
+      store.dispatch('fetchColumn', currentId)
       store.dispatch('fetchPosts', {
         currentId,
         pageSize: 3

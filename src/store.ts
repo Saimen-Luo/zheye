@@ -112,6 +112,9 @@ const store = createStore<IGlobalData>({
         currentPage: currentPage * 1
       }
     },
+    fetchColumn (state, rawData) {
+      state.columns.data[rawData.data._id] = rawData.data
+    },
     fetchPosts (state, { data: rawData, extraData: columnId }) {
       const { list, count, currentPage } = rawData.data
       state.posts.data = { ...state.posts.data, ...arrToObj(list) }
@@ -157,6 +160,11 @@ const store = createStore<IGlobalData>({
       // 通过比较 currentPage 判断数据是否已获取
       if (state.columns.currentPage < currentPage) {
         return asyncAndCommit(`/columns?currentPage=${currentPage}&pageSize=${pageSize}`, 'fetchColumns', commit)
+      }
+    },
+    fetchColumn ({ state, commit }, cid) {
+      if (!state.columns.data[cid]) {
+        return getAndCommit(`/columns/${cid}`, 'fetchColumn', commit)
       }
     },
     fetchPosts ({ state, commit }, params = {}) {
