@@ -2,6 +2,7 @@ import { useStore } from 'vuex'
 import { ref, computed, ComputedRef } from 'vue'
 
 interface ILoadParams {
+  currentId?: string,
   currentPage: number,
   pageSize: number
 }
@@ -9,10 +10,20 @@ interface ILoadParams {
 const useLoadMore = (actionName: string, total: ComputedRef, params: ILoadParams = { currentPage: 2, pageSize: 5 }) => {
   const store = useStore()
   const currentPage = ref(params.currentPage)
-  const requestParams = computed(() => ({
-    currentPage: currentPage.value,
-    pageSize: params.pageSize
-  }))
+  const requestParams = computed(() => {
+    if (params.currentId) {
+      return {
+        currentId: params.currentId,
+        currentPage: currentPage.value,
+        pageSize: params.pageSize
+      }
+    } else {
+      return {
+        currentPage: currentPage.value,
+        pageSize: params.pageSize
+      }
+    }
+  })
   const loadMore = () => {
     store.dispatch(actionName, requestParams.value).then(() => {
       currentPage.value++

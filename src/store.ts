@@ -50,12 +50,18 @@ export interface IGlobalError {
 interface IArrLikeObj<T> {
   [id: string]: T
 }
+
+interface ILoadColumn {
+  id: string,
+  total: number,
+  currentPage: number
+}
 export interface IGlobalData {
   error: IGlobalError,
   token: string,
   loading: boolean,
   columns: { data: IArrLikeObj<IColumn>, currentPage: number, total: number },
-  posts: { data: IArrLikeObj<IPost>, loadedColumns: string[] },
+  posts: { data: IArrLikeObj<IPost>, loadedColumns: IArrLikeObj<ILoadColumn> },
   user: IUser
 }
 
@@ -87,7 +93,7 @@ const store = createStore<IGlobalData>({
     token: localStorage.getItem('token') || '',
     loading: false,
     columns: { data: {}, currentPage: 0, total: 0 },
-    posts: { data: {}, loadedColumns: [] },
+    posts: { data: {}, loadedColumns: {} },
     user: { isLogin: false }
   },
   mutations: {
@@ -107,8 +113,13 @@ const store = createStore<IGlobalData>({
       }
     },
     fetchPosts (state, { data: rawData, extraData: columnId }) {
-      state.posts.data = { ...state.posts.data, ...arrToObj(rawData.data.list) }
-      state.posts.loadedColumns.push(columnId)
+      const { list, count, currentPage } = rawData.data
+      state.posts.data = { ...state.posts.data, ...arrToObj(list) }
+      state.posts.loadedColumns[columnId] = {
+        id: columnId,
+        currentPage,
+        total: count
+      }
     },
     fetchPost (state, rawData) {
       state.posts.data[rawData.data._id] = rawData.data
@@ -148,9 +159,11 @@ const store = createStore<IGlobalData>({
         return asyncAndCommit(`/columns?currentPage=${currentPage}&pageSize=${pageSize}`, 'fetchColumns', commit)
       }
     },
-    fetchPosts ({ state, commit }, cid) {
-      if (!state.posts.loadedColumns.includes(cid)) {
-        return asyncAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit, { method: 'get' }, cid)
+    fetchPosts ({ state, commit }, params = {}) {
+      const { loadedColumns } = state.posts
+      const { currentId, currentPage = 1, pageSize = 5 } = params
+      if (!loadedColumns[currentId] || loadedColumns[currentId].currentPage < currentPage) {
+        return asyncAndCommit(`/columns/${currentId}/posts?currentPage=${currentPage}&pageSize=${pageSize}`, 'fetchPosts', commit, { method: 'get' }, currentId)
       }
     },
     fetchPost ({ state, commit }, pid) {

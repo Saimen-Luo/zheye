@@ -17,6 +17,13 @@
       </div>
     </div>
     <post-list :list="posts" />
+    <button
+      class="btn btn-outline-primary mt-2 mb-5 mx-auto d-block w-25"
+      @click="loadMore"
+      v-if="!isLastPage"
+    >
+      加载更多
+    </button>
   </div>
 </template>
 
@@ -28,6 +35,7 @@ import { useStore } from 'vuex'
 import PostList from '../components/PostList.vue'
 import { IGlobalData, IColumn } from '../store'
 import { generateFitUrl } from '../Helper'
+import useLoadMore from '@/hooks/useLoadMore'
 
 export default defineComponent({
   name: 'ColumnDetail',
@@ -37,7 +45,7 @@ export default defineComponent({
   setup () {
     const route = useRoute()
     const store = useStore<IGlobalData>()
-    const currentId = route.params.id
+    const currentId = route.params.id as string
     const column = computed<IColumn>(() => {
       const selectColumn = store.getters.getColumnById(currentId)
       if (selectColumn) {
@@ -46,12 +54,38 @@ export default defineComponent({
       return selectColumn
     })
     const posts = computed(() => store.getters.getPostsByCid(currentId))
+    const total = computed(() => {
+      const currentLoadcolumn = store.state.posts.loadedColumns[currentId]
+      if (currentLoadcolumn) {
+        return currentLoadcolumn.total
+      }
+      return 0
+    })
+    const currentPage = computed(() => {
+      const currentLoadcolumn = store.state.posts.loadedColumns[currentId]
+      if (currentLoadcolumn) {
+        return currentLoadcolumn.currentPage
+      }
+      return 0
+    })
+    // console.log(total.value, currentPage.value)
+    console.log(total)
+    const { loadMore, isLastPage } = useLoadMore('fetchPosts', total, {
+      currentPage: currentPage.value === 0 ? 2 : currentPage.value + 1,
+      pageSize: 3,
+      currentId
+    })
     onMounted(() => {
-      store.dispatch('fetchPosts', currentId)
+      store.dispatch('fetchPosts', {
+        currentId,
+        pageSize: 3
+      })
     })
     return {
       column,
-      posts
+      posts,
+      loadMore,
+      isLastPage
     }
   }
 })
