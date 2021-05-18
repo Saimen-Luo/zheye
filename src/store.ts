@@ -147,8 +147,14 @@ const store = createStore<IGlobalData>({
         return asyncAndCommit(`/columns/${cid}/posts`, 'fetchPosts', commit, { method: 'get' }, cid)
       }
     },
-    fetchPost ({ commit }, pid) {
-      return getAndCommit(`/posts/${pid}`, 'fetchPost', commit)
+    fetchPost ({ state, commit }, pid) {
+      const currentPost = state.posts.data[pid]
+      if (!currentPost || !currentPost.content) {
+        return getAndCommit(`/posts/${pid}`, 'fetchPost', commit)
+      } else {
+        // createPost 编辑时需要返回 promise
+        return Promise.resolve({ data: currentPost })
+      }
     },
     updatePost ({ commit }, { id, payload }) {
       return asyncAndCommit(`/posts/${id}`, 'updatePost', commit, {
