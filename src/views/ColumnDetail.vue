@@ -53,7 +53,6 @@ export default defineComponent({
       }
       return selectColumn
     })
-    console.log(column)
     const posts = computed(() => store.getters.getPostsByCid(currentId))
     const total = computed(() => {
       const currentLoadcolumn = store.state.posts.loadedColumns[currentId]
@@ -69,8 +68,6 @@ export default defineComponent({
       }
       return 0
     })
-    // console.log(total.value, currentPage.value)
-    console.log(total)
     const { loadMore, isLastPage } = useLoadMore('fetchPosts', total, {
       currentPage: currentPage.value === 0 ? 2 : currentPage.value + 1,
       pageSize: 3,
