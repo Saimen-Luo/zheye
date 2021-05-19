@@ -149,6 +149,7 @@ const store = createStore<IGlobalData>({
       state.error = e
     },
     logout (state) {
+      state.user = { isLogin: false }
       state.token = ''
       localStorage.removeItem('token')
       delete axios.defaults.headers.common.Authorization
