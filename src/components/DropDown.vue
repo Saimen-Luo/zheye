@@ -7,7 +7,7 @@
     >
       {{ title }}
     </a>
-    <ul class="dropdown-menu" style="display: block" v-if="isOpen">
+    <ul class="dropdown-menu" style="display: block" v-if="isOpen" @click.stop="toggleOpen">
       <slot></slot>
     </ul>
   </div>
