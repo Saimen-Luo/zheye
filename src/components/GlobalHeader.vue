@@ -4,7 +4,7 @@
     <ul v-if="!user.isLogin" class="list-inline mb-0">
       <li class="list-inline-item">
         <router-link to="/login" class="btn btn-outline-light my-2">
-          登陆
+          登录
         </router-link>
       </li>
       <li class="list-inline-item">

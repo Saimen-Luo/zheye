@@ -65,8 +65,8 @@ export default defineComponent({
         }
         store.dispatch('loginAndFetchUser', payload).then(() => {
           const timeout = 1000
-          // 登陆成功1秒后跳转首页
-          createMessage('success', '登陆成功，跳转首页...', timeout)
+          // 登录成功1秒后跳转首页
+          createMessage('success', '登录成功，跳转首页...', timeout)
           setTimeout(() => {
             router.push('/')
           }, timeout)
